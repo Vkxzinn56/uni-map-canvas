@@ -1,0 +1,199 @@
+version: "3.9"
+
+# ══════════════════════════════════════════════════════════
+# UniMap 3.0 — Docker Compose (Development)
+# ══════════════════════════════════════════════════════════
+
+x-common-env: &common-env
+  APP_NAME: UniMap
+  APP_VERSION: "3.0.0"
+  APP_ENV: development
+  DEBUG: "true"
+
+x-db-env: &db-env
+  DATABASE_URL: postgresql+asyncpg://unimap:unimap_pass@postgres:5432/unimap_db
+
+x-redis-env: &redis-env
+  REDIS_URL: redis://redis:6379/0
+  CELERY_BROKER_URL: redis://redis:6379/1
+  CELERY_RESULT_BACKEND: redis://redis:6379/2
+
+services:
+  # ── FastAPI Application ──────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+      target: development
+    container_name: unimap-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      <<: [*common-env, *db-env, *redis-env]
+      SECRET_KEY: dev-secret-key-change-in-production-min-32-chars
+      JWT_SECRET_KEY: dev-jwt-secret-key-change-in-prod-min-32
+      ENCRYPTION_KEY: dev-encryption-key-32bytes-change!!
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - unimap-net
+    restart: unless-stopped
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ── Celery Worker ────────────────────────────────────────
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+      target: development
+    container_name: unimap-worker
+    environment:
+      <<: [*common-env, *db-env, *redis-env]
+      SECRET_KEY: dev-secret-key-change-in-production-min-32-chars
+      JWT_SECRET_KEY: dev-jwt-secret-key-change-in-prod-min-32
+      ENCRYPTION_KEY: dev-encryption-key-32bytes-change!!
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - unimap-net
+    restart: unless-stopped
+    command: celery -A backend.core.celery_app worker --loglevel=info --concurrency=4
+
+  # ── Celery Beat (scheduler) ──────────────────────────────
+  beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+      target: development
+    container_name: unimap-beat
+    environment:
+      <<: [*common-env, *db-env, *redis-env]
+      SECRET_KEY: dev-secret-key-change-in-production-min-32-chars
+      JWT_SECRET_KEY: dev-jwt-secret-key-change-in-prod-min-32
+      ENCRYPTION_KEY: dev-encryption-key-32bytes-change!!
+    depends_on:
+      - redis
+    networks:
+      - unimap-net
+    restart: unless-stopped
+    command: celery -A backend.core.celery_app beat --loglevel=info
+
+  # ── PostgreSQL ───────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: unimap-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: unimap
+      POSTGRES_PASSWORD: unimap_pass
+      POSTGRES_DB: unimap_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unimap -d unimap_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - unimap-net
+    restart: unless-stopped
+
+  # ── Redis ────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: unimap-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - unimap-net
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+  # ── Adminer (DB UI) ──────────────────────────────────────
+  adminer:
+    image: adminer:latest
+    container_name: unimap-adminer
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - unimap-net
+    profiles:
+      - tools
+
+  # ── Redis Commander ──────────────────────────────────────
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: unimap-redis-ui
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - unimap-net
+    profiles:
+      - tools
+
+  # ── Prometheus ───────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: unimap-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - unimap-net
+    profiles:
+      - monitoring
+
+  # ── Grafana ──────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: unimap-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - unimap-net
+    profiles:
+      - monitoring
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  unimap-net:
+    driver: bridge
