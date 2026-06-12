@@ -24,7 +24,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const openLogin = useAuthStore((s) => s.openLogin);
   const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Auth pages render without the shell chrome
+  if (path === "/login" || path === "/cadastro") {
+    return <>{children}</>;
+  }
 
   const nav = allNav.filter((n) => !n.auth || !!user);
   const mobileNav = nav.filter((n) => n.to !== "/perfil").slice(0, 5);
