@@ -3,11 +3,12 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
   Home, Map, Calendar, CalendarHeart, Stethoscope, User as UserIcon,
-  Search, Bell, Sparkles, Menu, X, LayoutGrid,
+  Search, Bell, Sparkles, Menu, X, LayoutGrid, LogOut,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { GlobalSearch } from "@/components/global-search";
 
 const allNav = [
   { to: "/", label: "Início", icon: Home, auth: false },
@@ -21,9 +22,16 @@ const allNav = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const openLogin = useAuthStore((s) => s.openLogin);
+  
   const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Auth pages render without the shell chrome
+  if (path === "/login" || path === "/cadastro") {
+    return <>{children}</>;
+  }
 
   const nav = allNav.filter((n) => !n.auth || !!user);
   const mobileNav = nav.filter((n) => n.to !== "/perfil").slice(0, 5);
@@ -82,7 +90,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <>
               <div className="text-[13px] font-semibold mb-1">Acesso de visitante</div>
               <p className="text-[11.5px] text-muted-foreground leading-relaxed mb-3">Entre para acessar agenda, notas e serviços.</p>
-              <Button size="sm" className="w-full" onClick={openLogin}>Entrar</Button>
+              <Link to="/login"><Button size="sm" className="w-full">Entrar</Button></Link>
+              <Link to="/cadastro" className="block text-[11.5px] text-center text-muted-foreground hover:text-foreground mt-2">Criar conta institucional</Link>
             </>
           )}
         </div>
@@ -102,20 +111,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
 
             <div className="hidden md:flex flex-1 max-w-xl ml-2">
-              <div className="relative w-full">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input
-                  placeholder="Buscar salas, blocos, eventos, professores…"
-                  className="w-full h-10 pl-10 pr-16 rounded-xl bg-secondary/70 border border-transparent focus:border-border focus:bg-surface outline-none text-[13.5px] transition-colors"
-                />
-                <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden lg:flex h-6 px-1.5 items-center rounded-md border border-border bg-surface text-[10.5px] text-muted-foreground font-medium">⌘K</kbd>
-              </div>
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                aria-label="Abrir busca global"
+                className="group relative w-full h-10 pl-10 pr-16 rounded-xl bg-secondary/70 border border-transparent hover:bg-surface hover:border-border outline-none text-left text-[13.5px] text-muted-foreground transition-colors"
+              >
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4" />
+                Buscar salas, blocos, eventos, professores…
+                <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden lg:flex h-6 px-1.5 items-center rounded-md border border-border bg-surface text-[10.5px] font-medium">⌘K</kbd>
+              </button>
             </div>
 
             <div className="flex-1 md:hidden" />
 
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Buscar"
+              className="md:hidden size-9 grid place-items-center rounded-xl hover:bg-secondary transition-colors"
+            >
+              <Search className="size-4.5" strokeWidth={2} />
+            </button>
             <ThemeToggle />
-            <button className="size-9 grid place-items-center rounded-xl hover:bg-secondary transition-colors relative">
+            <button aria-label="Notificações" className="size-9 grid place-items-center rounded-xl hover:bg-secondary transition-colors relative">
               <Bell className="size-4.5" strokeWidth={2} />
               <span className="absolute top-2 right-2 size-2 rounded-full bg-primary" />
             </button>
@@ -123,6 +142,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         <main className="flex-1 pb-24 lg:pb-10">{children}</main>
+        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
 
         {/* Mobile bottom nav */}
         <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-border pb-[env(safe-area-inset-bottom)]">
@@ -166,8 +186,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </nav>
-            <div className="mt-auto">
-              {!user && <Button className="w-full" onClick={() => { setMobileMenu(false); openLogin(); }}>Entrar</Button>}
+            <div className="mt-auto flex flex-col gap-2">
+              {user ? (
+                <Button variant="outline" className="w-full" onClick={() => { setMobileMenu(false); logout(); }}>
+                  <LogOut className="size-4" /> Sair
+                </Button>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileMenu(false)}>
+                    <Button className="w-full">Entrar</Button>
+                  </Link>
+                  <Link to="/cadastro" onClick={() => setMobileMenu(false)}>
+                    <Button variant="ghost" className="w-full">Criar conta</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
