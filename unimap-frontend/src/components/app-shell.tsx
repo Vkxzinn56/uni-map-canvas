@@ -22,7 +22,7 @@ const allNav = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
-  void useAuthStore((s) => s.openLogin); // keep store subscription stable
+  
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const [mobileMenu, setMobileMenu] = useState(false);
