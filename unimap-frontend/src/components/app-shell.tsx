@@ -90,7 +90,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <>
               <div className="text-[13px] font-semibold mb-1">Acesso de visitante</div>
               <p className="text-[11.5px] text-muted-foreground leading-relaxed mb-3">Entre para acessar agenda, notas e serviços.</p>
-              <Button size="sm" className="w-full" onClick={openLogin}>Entrar</Button>
+              <Link to="/login"><Button size="sm" className="w-full">Entrar</Button></Link>
+              <Link to="/cadastro" className="block text-[11.5px] text-center text-muted-foreground hover:text-foreground mt-2">Criar conta institucional</Link>
             </>
           )}
         </div>
