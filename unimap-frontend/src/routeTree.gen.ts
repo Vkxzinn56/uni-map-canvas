@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as ClinicaRouteImport } from './routes/clinica'
+import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -32,6 +34,11 @@ const MapaRoute = MapaRouteImport.update({
   path: '/mapa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventosRoute = EventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
@@ -40,6 +47,11 @@ const EventosRoute = EventosRouteImport.update({
 const ClinicaRoute = ClinicaRouteImport.update({
   id: '/clinica',
   path: '/clinica',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgendaRoute = AgendaRouteImport.update({
@@ -56,8 +68,10 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
+  '/cadastro': typeof CadastroRoute
   '/clinica': typeof ClinicaRoute
   '/eventos': typeof EventosRoute
+  '/login': typeof LoginRoute
   '/mapa': typeof MapaRoute
   '/perfil': typeof PerfilRoute
   '/servicos': typeof ServicosRoute
@@ -65,8 +79,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
+  '/cadastro': typeof CadastroRoute
   '/clinica': typeof ClinicaRoute
   '/eventos': typeof EventosRoute
+  '/login': typeof LoginRoute
   '/mapa': typeof MapaRoute
   '/perfil': typeof PerfilRoute
   '/servicos': typeof ServicosRoute
@@ -75,8 +91,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
+  '/cadastro': typeof CadastroRoute
   '/clinica': typeof ClinicaRoute
   '/eventos': typeof EventosRoute
+  '/login': typeof LoginRoute
   '/mapa': typeof MapaRoute
   '/perfil': typeof PerfilRoute
   '/servicos': typeof ServicosRoute
@@ -86,8 +104,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agenda'
+    | '/cadastro'
     | '/clinica'
     | '/eventos'
+    | '/login'
     | '/mapa'
     | '/perfil'
     | '/servicos'
@@ -95,8 +115,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/agenda'
+    | '/cadastro'
     | '/clinica'
     | '/eventos'
+    | '/login'
     | '/mapa'
     | '/perfil'
     | '/servicos'
@@ -104,8 +126,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/agenda'
+    | '/cadastro'
     | '/clinica'
     | '/eventos'
+    | '/login'
     | '/mapa'
     | '/perfil'
     | '/servicos'
@@ -114,8 +138,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendaRoute: typeof AgendaRoute
+  CadastroRoute: typeof CadastroRoute
   ClinicaRoute: typeof ClinicaRoute
   EventosRoute: typeof EventosRoute
+  LoginRoute: typeof LoginRoute
   MapaRoute: typeof MapaRoute
   PerfilRoute: typeof PerfilRoute
   ServicosRoute: typeof ServicosRoute
@@ -144,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/eventos': {
       id: '/eventos'
       path: '/eventos'
@@ -156,6 +189,13 @@ declare module '@tanstack/react-router' {
       path: '/clinica'
       fullPath: '/clinica'
       preLoaderRoute: typeof ClinicaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agenda': {
@@ -178,8 +218,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendaRoute: AgendaRoute,
+  CadastroRoute: CadastroRoute,
   ClinicaRoute: ClinicaRoute,
   EventosRoute: EventosRoute,
+  LoginRoute: LoginRoute,
   MapaRoute: MapaRoute,
   PerfilRoute: PerfilRoute,
   ServicosRoute: ServicosRoute,
