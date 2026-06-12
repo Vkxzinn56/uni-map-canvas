@@ -185,8 +185,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </nav>
-            <div className="mt-auto">
-              {!user && <Button className="w-full" onClick={() => { setMobileMenu(false); openLogin(); }}>Entrar</Button>}
+            <div className="mt-auto flex flex-col gap-2">
+              {user ? (
+                <Button variant="outline" className="w-full" onClick={() => { setMobileMenu(false); logout(); }}>
+                  <LogOut className="size-4" /> Sair
+                </Button>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileMenu(false)}>
+                    <Button className="w-full">Entrar</Button>
+                  </Link>
+                  <Link to="/cadastro" onClick={() => setMobileMenu(false)}>
+                    <Button variant="ghost" className="w-full">Criar conta</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
