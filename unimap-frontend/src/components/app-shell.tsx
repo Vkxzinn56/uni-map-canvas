@@ -3,11 +3,12 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
   Home, Map, Calendar, CalendarHeart, Stethoscope, User as UserIcon,
-  Search, Bell, Sparkles, Menu, X, LayoutGrid,
+  Search, Bell, Sparkles, Menu, X, LayoutGrid, LogOut,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { GlobalSearch } from "@/components/global-search";
 
 const allNav = [
   { to: "/", label: "Início", icon: Home, auth: false },
