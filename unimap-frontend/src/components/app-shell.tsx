@@ -110,20 +110,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
 
             <div className="hidden md:flex flex-1 max-w-xl ml-2">
-              <div className="relative w-full">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input
-                  placeholder="Buscar salas, blocos, eventos, professores…"
-                  className="w-full h-10 pl-10 pr-16 rounded-xl bg-secondary/70 border border-transparent focus:border-border focus:bg-surface outline-none text-[13.5px] transition-colors"
-                />
-                <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden lg:flex h-6 px-1.5 items-center rounded-md border border-border bg-surface text-[10.5px] text-muted-foreground font-medium">⌘K</kbd>
-              </div>
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                aria-label="Abrir busca global"
+                className="group relative w-full h-10 pl-10 pr-16 rounded-xl bg-secondary/70 border border-transparent hover:bg-surface hover:border-border outline-none text-left text-[13.5px] text-muted-foreground transition-colors"
+              >
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4" />
+                Buscar salas, blocos, eventos, professores…
+                <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden lg:flex h-6 px-1.5 items-center rounded-md border border-border bg-surface text-[10.5px] font-medium">⌘K</kbd>
+              </button>
             </div>
 
             <div className="flex-1 md:hidden" />
 
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Buscar"
+              className="md:hidden size-9 grid place-items-center rounded-xl hover:bg-secondary transition-colors"
+            >
+              <Search className="size-4.5" strokeWidth={2} />
+            </button>
             <ThemeToggle />
-            <button className="size-9 grid place-items-center rounded-xl hover:bg-secondary transition-colors relative">
+            <button aria-label="Notificações" className="size-9 grid place-items-center rounded-xl hover:bg-secondary transition-colors relative">
               <Bell className="size-4.5" strokeWidth={2} />
               <span className="absolute top-2 right-2 size-2 rounded-full bg-primary" />
             </button>
@@ -131,6 +141,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         <main className="flex-1 pb-24 lg:pb-10">{children}</main>
+        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
 
         {/* Mobile bottom nav */}
         <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-border pb-[env(safe-area-inset-bottom)]">
