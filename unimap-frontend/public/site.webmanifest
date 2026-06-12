@@ -1,0 +1,12 @@
+{
+  "name": "UniMap UNIPÊ",
+  "short_name": "UniMap",
+  "description": "Plataforma universitária do UNIPÊ — mapas, agenda, eventos, clínicas-escola e serviços.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#A12C43",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+  ]
+}
