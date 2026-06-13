@@ -47,7 +47,7 @@ function AgendaPage() {
     if (blockId) {
       navigate({ to: "/mapa", search: { block: blockId } });
     } else {
-      navigate({ to: "/mapa" });
+      navigate({ to: "/mapa", search: { block: undefined } });
     }
   };
 

@@ -1,15 +1,8 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Outlet, Link, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 
-import appCss from "../styles.css?url";
+import { queryClient } from "../router";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/app-shell";
 import { LoginModal } from "@/components/login-modal";
@@ -75,54 +68,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#A12C43", media: "(prefers-color-scheme: light)" },
-      { name: "theme-color", content: "#161618", media: "(prefers-color-scheme: dark)" },
-      { title: "UniMap UNIPÊ — Plataforma Universitária" },
-      { name: "description", content: "UniMap UNIPÊ: mapas do campus, agenda, eventos, clínicas-escola e serviços acadêmicos em uma experiência premium." },
-      { name: "author", content: "UNIPÊ" },
-      { property: "og:title", content: "UniMap UNIPÊ — Plataforma Universitária" },
-      { property: "og:description", content: "Mapas, agenda, eventos, clínicas-escola e serviços acadêmicos do UNIPÊ." },
-      { property: "og:site_name", content: "UniMap UNIPÊ" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "UniMap UNIPÊ" },
-      { name: "twitter:description", content: "Plataforma universitária do UNIPÊ." },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/site.webmanifest" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-    ],
-  }),
-  shellComponent: RootShell,
+export const Route = createRootRouteWithContext<{ queryClient: typeof queryClient }>()({
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
   return (
     <QueryClientProvider client={queryClient}>
       <AppShell>

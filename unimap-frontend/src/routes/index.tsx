@@ -48,7 +48,7 @@ function Home() {
             Encontre salas, monte sua rota pelo campus, acompanhe sua agenda e descubra eventos e serviços do UNIPÊ.
           </p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
-            <Link to="/mapa" className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-5 h-11 text-[13.5px] font-medium shadow-soft hover:opacity-95 transition-opacity">
+            <Link to="/mapa" search={{ block: undefined }} className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-5 h-11 text-[13.5px] font-medium shadow-soft hover:opacity-95 transition-opacity">
               <Compass className="size-4" /> Abrir mapa do campus
             </Link>
             {isVisitor && (
