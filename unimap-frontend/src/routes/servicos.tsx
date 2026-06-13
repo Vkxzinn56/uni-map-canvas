@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import * as Icons from "lucide-react";
-import { Sparkles, Lock, ArrowRight } from "lucide-react";
+import { Sparkles, Lock, ArrowRight, ExternalLink } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { getVisibleServices, type ServiceItem } from "@/lib/services-visibility";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -79,6 +79,7 @@ function ServicosPage() {
                         <div className="flex items-center gap-1.5">
                           <div className="text-[14.5px] font-semibold tracking-tight truncate">{s.name}</div>
                           {isPrivate && <Lock className="size-3 text-muted-foreground" />}
+                          {s.external && <ExternalLink className="size-3 text-muted-foreground" />}
                         </div>
                         <p className="text-[12.5px] text-muted-foreground mt-1 leading-relaxed line-clamp-2">{s.description}</p>
                         {(s.hours || s.contact) && (
@@ -89,6 +90,13 @@ function ServicosPage() {
                   </motion.div>
                 );
 
+                if (s.external) {
+                  return (
+                    <a key={s.id} href={s.external} target="_blank" rel="noopener noreferrer" className="block">
+                      {content}
+                    </a>
+                  );
+                }
                 if (isPrivate) {
                   return (
                     <button key={s.id} type="button" onClick={() => setRestricted(s)} className="text-left">
@@ -97,7 +105,7 @@ function ServicosPage() {
                   );
                 }
                 if (s.href) {
-                  return <Link key={s.id} to={s.href as "/mapa"} className="block">{content}</Link>;
+                  return <Link key={s.id} to={s.href as any} className="block">{content}</Link>;
                 }
                 return <div key={s.id}>{content}</div>;
               })}

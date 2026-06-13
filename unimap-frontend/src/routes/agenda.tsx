@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "motion/react";
+import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { motion, AnimatePresence } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { MapPin, Navigation, Lock, User as UserIcon, Sparkles } from "lucide-react";
 import { agendaService } from "@/services";
 import { useAuthStore } from "@/store/auth";
+import { mockBlocks } from "@/mock";
 import type { AgendaItem } from "@/types";
 
 export const Route = createFileRoute("/agenda")({
@@ -20,12 +21,13 @@ const typeStyles: Record<AgendaItem["type"], { bg: string; text: string; label: 
 };
 
 function AgendaPage() {
+  const navigate = useNavigate();
   const isVisitor = useAuthStore((s) => s.isVisitor);
   const openLogin = useAuthStore((s) => s.openLogin);
   const { data: items } = useQuery({ queryKey: ["agenda"], queryFn: agendaService.list, enabled: !isVisitor });
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0, 10));
 
-  const days = useMemo(() => {
+  const days = (() => {
     const arr: { iso: string; weekday: string; day: string }[] = [];
     const base = new Date();
     for (let i = 0; i < 7; i++) {
@@ -37,9 +39,17 @@ function AgendaPage() {
       });
     }
     return arr;
-  }, []);
+  })();
 
   const dayItems = (items ?? []).filter((i) => i.date === selectedDate);
+
+  const goToMap = (blockId?: string) => {
+    if (blockId) {
+      navigate({ to: "/mapa", search: { block: blockId } });
+    } else {
+      navigate({ to: "/mapa" });
+    }
+  };
 
   if (isVisitor) {
     return (
@@ -117,7 +127,10 @@ function AgendaPage() {
                     <span className="inline-flex items-center gap-1"><MapPin className="size-3.5" /> {item.location}</span>
                   </div>
                 </div>
-                <button className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-secondary hover:bg-secondary/70 px-3 h-9 text-[12px] font-medium transition-colors">
+                <button
+                  onClick={() => goToMap(item.blockId)}
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-secondary hover:bg-secondary/70 px-3 h-9 text-[12px] font-medium transition-colors"
+                >
                   <Navigation className="size-3.5" /> Ver rota
                 </button>
               </div>

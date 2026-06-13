@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, MapPin, Users, Clock, Mic, MessageSquare, Star, Check } from "lucide-react";
 import type { Event } from "@/types";
@@ -18,6 +19,15 @@ function formatRange(e: Event) {
   if (!e.endDate || e.endDate === e.date) return d1;
   const d2 = new Date(e.endDate).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
   return `${d1} – ${d2}`;
+}
+
+function locationBlock(location: string): string | undefined {
+  const map: Record<string, string> = {
+    "bloco b": "b_b", "bloco c": "b_c", "bloco e": "b_e",
+    "bloco d": "b_d", "bloco a": "b_a",
+  };
+  const key = Object.keys(map).find((k) => location.toLowerCase().includes(k));
+  return key ? map[key] : undefined;
 }
 
 export function EventDetailsDialog({ event, isRegistered, onClose, onRegister }: Props) {
@@ -50,7 +60,13 @@ export function EventDetailsDialog({ event, isRegistered, onClose, onRegister }:
                 </div>
                 <div className="rounded-xl bg-secondary/60 p-2.5 col-span-2 sm:col-span-1">
                   <div className="flex items-center gap-1.5 text-[10.5px] text-muted-foreground uppercase tracking-wider"><MapPin className="size-3" /> Local</div>
-                  <div className="text-[12.5px] font-semibold mt-0.5 truncate">{event.location}</div>
+                  <Link
+                    to={locationBlock(event.location) ? "/mapa" : "."}
+                    search={locationBlock(event.location) ? { block: locationBlock(event.location)! } : undefined}
+                    className="text-[12.5px] font-semibold mt-0.5 truncate hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    {event.location}
+                  </Link>
                 </div>
               </div>
 

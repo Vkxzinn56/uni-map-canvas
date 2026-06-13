@@ -4,22 +4,23 @@ export interface ServiceItem {
   id: string;
   name: string;
   description: string;
-  icon: string; // lucide name
+  icon: string;
   category: string;
   visibility: "public" | "private";
   href?: string;
+  external?: string;
   contact?: string;
   hours?: string;
 }
 
 export const PUBLIC_SERVICES: ServiceItem[] = [
-  { id: "biblioteca", name: "Biblioteca", description: "Acervo, salas de estudo e horários de funcionamento.", icon: "BookOpen", category: "Estudo", visibility: "public", hours: "Seg–Sex · 07h–22h" },
-  { id: "clinicas", name: "Clínicas-Escola", description: "Atendimentos abertos à comunidade em diversas especialidades.", icon: "Stethoscope", category: "Saúde", visibility: "public", href: "/clinica" },
+  { id: "biblioteca", name: "Biblioteca", description: "Acervo, salas de estudo e horários de funcionamento. Mais de 140 mil volumes.", icon: "BookOpen", category: "Estudo", visibility: "public", hours: "Seg–Sex · 07h–22h · Sáb 08h–12h" },
+  { id: "clinicas", name: "Clínicas-Escola", description: "Atendimentos abertos à comunidade em odontologia, psicologia, fisioterapia, nutrição e enfermagem.", icon: "Stethoscope", category: "Saúde", visibility: "public", href: "/clinica" },
   { id: "central", name: "Central de Atendimento", description: "Informações gerais, ouvidoria e suporte ao público.", icon: "Headphones", category: "Atendimento", visibility: "public", contact: "(83) 2106-9700" },
   { id: "secretaria", name: "Secretaria Geral", description: "Contatos e protocolos institucionais.", icon: "Mail", category: "Atendimento", visibility: "public", contact: "secretaria@unipe.edu.br" },
   { id: "coordenacoes", name: "Coordenação dos cursos", description: "Lista de coordenadores e contatos por curso.", icon: "Users", category: "Acadêmico", visibility: "public" },
   { id: "horarios", name: "Horários institucionais", description: "Funcionamento dos blocos, biblioteca e atendimentos.", icon: "Clock", category: "Institucional", visibility: "public" },
-  { id: "mapa", name: "Localização dos blocos", description: "Mapa interativo do campus com salas e serviços.", icon: "Map", category: "Campus", visibility: "public", href: "/mapa" },
+  { id: "mapa", name: "Localização dos blocos", description: "Mapa interativo do campus com blocos, salas e rotas em tempo real.", icon: "Map", category: "Campus", visibility: "public", href: "/mapa" },
   { id: "estacionamento", name: "Estacionamento", description: "Áreas disponíveis, acessos e regras.", icon: "Car", category: "Campus", visibility: "public" },
   { id: "alimentacao", name: "Restaurantes e alimentação", description: "Praça de alimentação, cafés e cantinas do campus.", icon: "UtensilsCrossed", category: "Campus", visibility: "public" },
   { id: "auditorios", name: "Auditórios", description: "Espaços para eventos, palestras e defesas.", icon: "Mic2", category: "Campus", visibility: "public" },
@@ -39,7 +40,7 @@ export const PRIVATE_SERVICES: ServiceItem[] = [
   { id: "financeiro", name: "Financeiro", description: "Boletos, mensalidades e negociações.", icon: "Wallet", category: "Financeiro", visibility: "private" },
   { id: "documentos", name: "Documentos", description: "Declarações, atestados e certificados.", icon: "FileText", category: "Acadêmico", visibility: "private" },
   { id: "agenda", name: "Agenda acadêmica", description: "Aulas, provas e compromissos sincronizados.", icon: "Calendar", category: "Acadêmico", visibility: "private", href: "/agenda" },
-  { id: "blackboard", name: "Blackboard", description: "Ambiente virtual de aprendizagem.", icon: "MonitorPlay", category: "Acadêmico", visibility: "private" },
+  { id: "blackboard", name: "Blackboard Learn", description: "Ambiente virtual de aprendizagem UNIPÊ. Acesse suas disciplinas, materiais e atividades.", icon: "MonitorPlay", category: "Acadêmico", visibility: "private", external: "https://bb.cruzeirodosulvirtual.com.br/" },
 ];
 
 export function getVisibleServices(role: UserRole | "visitor"): ServiceItem[] {

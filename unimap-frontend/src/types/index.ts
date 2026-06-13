@@ -25,6 +25,8 @@ export interface Block {
   x: number;
   y: number;
   color: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Speaker {
@@ -62,13 +64,15 @@ export interface ServiceLocation {
   x: number;
   y: number;
   hours: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface AgendaItem {
   id: string;
   title: string;
   type: "class" | "exam" | "event" | "personal";
-  date: string; // ISO
+  date: string;
   startTime: string;
   endTime: string;
   location: string;
@@ -107,10 +111,11 @@ export interface Specialty {
 }
 
 export interface Route {
-  id: string;
+  id?: string;
   from: string;
   to: string;
   steps: string[];
   distanceM: number;
   durationMin: number;
+  coordinates?: [number, number][];
 }

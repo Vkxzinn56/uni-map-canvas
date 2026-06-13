@@ -1,16 +1,23 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { useQuery } from "@tanstack/react-query";
-import { Layers, Building2, DoorOpen, Coffee, Navigation, Clock, MapPin, X, Target, Info, Sparkles } from "lucide-react";
+import { Layers, Building2, DoorOpen, Coffee, Navigation, Clock, MapPin, X, Target, Info, Sparkles, Loader2 } from "lucide-react";
 import { CampusMap } from "@/components/campus-map";
-import { mapService } from "@/services";
 import { mockBlocks, mockRooms, mockServices } from "@/mock";
+import { useOsrmRoute } from "@/hooks/use-osrm-route";
 
 export const Route = createFileRoute("/mapa")({
-  head: () => ({ meta: [{ title: "Mapa do Campus — UniMap" }, { name: "description", content: "Encontre blocos, salas e serviços do UNIPÊ com rotas estimadas." }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    block: search.block as string | undefined,
+  }),
+  head: () => ({ meta: [
+    { title: "Mapa do Campus — UniMap" },
+    { name: "description", content: "Encontre blocos, salas e serviços do UNIPÊ com rotas estimadas." },
+  ] }),
   component: MapaPage,
 });
+
+const PORTARIA_COORDS = { lat: -7.15850, lng: -34.85750 };
 
 const filters = [
   { id: "all", label: "Todos", icon: Layers },
@@ -20,14 +27,23 @@ const filters = [
 ] as const;
 
 function MapaPage() {
+  const { block: initialBlock } = useSearch({ from: Route.id });
   const [filter, setFilter] = useState<typeof filters[number]["id"]>("all");
-  const [selected, setSelected] = useState<string | null>(null);
-  const { data: route } = useQuery({
-    queryKey: ["route", selected],
-    queryFn: () => mapService.route("Portaria", selected!),
-    enabled: !!selected,
-  });
+  const [selected, setSelected] = useState<string | null>(initialBlock ?? null);
+  const { route, loading, error, fetchRoute, clearRoute } = useOsrmRoute();
   const block = mockBlocks.find((b) => b.id === selected);
+
+  useEffect(() => {
+    if (selected && block) {
+      fetchRoute(PORTARIA_COORDS, { lat: block.latitude, lng: block.longitude });
+    } else {
+      clearRoute();
+    }
+  }, [selected]);
+
+  const handleSelect = (id: string) => {
+    setSelected(id === selected ? null : id);
+  };
 
   return (
     <div className="px-4 lg:px-8 py-6 lg:py-8 max-w-7xl mx-auto">
@@ -55,12 +71,13 @@ function MapaPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5">
         <CampusMap
           highlightedBlockId={selected}
           showBlocks={filter === "all" || filter === "blocks" || filter === "rooms"}
           showServices={filter === "all" || filter === "services"}
-          onSelectBlock={setSelected}
+          onSelectBlock={handleSelect}
+          routeCoordinates={route?.coordinates}
         />
 
         <AnimatePresence mode="wait">
@@ -130,32 +147,39 @@ function MapaPage() {
 
               <div className="mt-5 rounded-2xl bg-primary-soft border border-primary/10 p-4">
                 <div className="flex items-center gap-2 text-[12px] font-medium text-primary mb-1.5">
-                  <Navigation className="size-3.5" /> Rota sugerida
+                  <Navigation className="size-3.5" /> Rota da Portaria Principal
                 </div>
-                <div className="flex items-center gap-4 text-[13px]">
-                  <div>
-                    <div className="text-muted-foreground text-[11px]">Distância</div>
-                    <div className="font-semibold tabular-nums">{route?.distanceM ?? "—"} m</div>
+                {loading ? (
+                  <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground py-2">
+                    <Loader2 className="size-3.5 animate-spin" /> Calculando rota…
                   </div>
-                  <div className="h-8 w-px bg-border" />
-                  <div>
-                    <div className="text-muted-foreground text-[11px]">Tempo</div>
-                    <div className="font-semibold tabular-nums">~{route?.durationMin ?? "—"} min</div>
-                  </div>
-                </div>
-                {route && (
-                  <ol className="mt-3 space-y-1.5">
-                    {route.steps.map((s, i) => (
-                      <li key={i} className="flex gap-2 text-[12px] text-foreground/80">
-                        <span className="size-4 shrink-0 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold grid place-items-center mt-0.5">{i + 1}</span>
-                        {s}
-                      </li>
-                    ))}
-                  </ol>
-                )}
-                <button className="mt-4 w-full h-9 rounded-xl bg-primary text-primary-foreground text-[12.5px] font-medium hover:opacity-95 transition-opacity inline-flex items-center justify-center gap-1.5">
-                  <Navigation className="size-3.5" /> Traçar rota
-                </button>
+                ) : error ? (
+                  <div className="text-[12px] text-destructive py-1">{error}</div>
+                ) : route ? (
+                  <>
+                    <div className="flex items-center gap-4 text-[13px]">
+                      <div>
+                        <div className="text-muted-foreground text-[11px]">Distância</div>
+                        <div className="font-semibold tabular-nums">{route.distance} m</div>
+                      </div>
+                      <div className="h-8 w-px bg-border" />
+                      <div>
+                        <div className="text-muted-foreground text-[11px]">Tempo</div>
+                        <div className="font-semibold tabular-nums">~{route.duration} min</div>
+                      </div>
+                    </div>
+                    {route.steps.length > 0 && (
+                      <ol className="mt-3 space-y-1.5">
+                        {route.steps.map((s, i) => (
+                          <li key={i} className="flex gap-2 text-[12px] text-foreground/80">
+                            <span className="size-4 shrink-0 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold grid place-items-center mt-0.5">{i + 1}</span>
+                            {s.instruction}
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </>
+                ) : null}
               </div>
             </motion.aside>
           ) : (
@@ -180,7 +204,7 @@ function MapaPage() {
                 ))}
               </div>
               <div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-                <Clock className="size-3.5" /> Atualizado em tempo real
+                <Clock className="size-3.5" /> Mapa OpenStreetMap em tempo real
               </div>
             </motion.aside>
           )}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, MapPin, Users, Check, ArrowRight, Lock } from "lucide-react";
@@ -16,6 +16,18 @@ export const Route = createFileRoute("/eventos")({
 
 const categories = ["Todos", "Tecnologia", "Carreira", "Cultura"] as const;
 const visibilityFilters = ["Todos", "Públicos", "Privados"] as const;
+
+function locationBlock(location: string): string | undefined {
+  const map: Record<string, string> = {
+    "bloco b": "b_b",
+    "bloco c": "b_c",
+    "bloco e": "b_e",
+    "bloco d": "b_d",
+    "bloco a": "b_a",
+  };
+  const key = Object.keys(map).find((k) => location.toLowerCase().includes(k));
+  return key ? map[key] : undefined;
+}
 
 function EventosPage() {
   const { data: events } = useQuery({ queryKey: ["events"], queryFn: eventService.list });
@@ -89,6 +101,7 @@ function EventosPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {filtered.map((e, i) => {
           const isReg = registered[e.id] || e.registered;
+          const blockId = locationBlock(e.location);
           return (
             <motion.article
               key={e.id}
@@ -115,7 +128,15 @@ function EventosPage() {
                 <p className="text-[12.5px] text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{e.description}</p>
                 <div className="grid grid-cols-2 gap-2 mt-4 text-[11.5px] text-muted-foreground">
                   <div className="flex items-center gap-1.5"><Calendar className="size-3.5" /> {new Date(e.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} · {e.startTime}</div>
-                  <div className="flex items-center gap-1.5"><MapPin className="size-3.5" /> {e.location}</div>
+                  <Link
+                    to={blockId ? "/mapa" : "."}
+                    search={blockId ? { block: blockId } : undefined}
+                    className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                    onClick={(ev) => { if (!blockId) ev.preventDefault(); }}
+                  >
+                    <MapPin className="size-3.5 shrink-0" />
+                    <span className="truncate">{e.location}</span>
+                  </Link>
                 </div>
 
                 {e.speakers && e.speakers.length > 0 && (

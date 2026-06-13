@@ -21,6 +21,7 @@ export const mockBlocks: Block[] = [
     purpose: "Formação prática em saúde e atendimento aberto à comunidade através das clínicas-escola.",
     serviceIds: ["s_clinic"],
     floors: 3, x: 22, y: 30, color: "var(--chart-1)",
+    latitude: -7.15835, longitude: -34.85618,
   },
   {
     id: "b_b", name: "Bloco B — Engenharias", code: "B",
@@ -29,6 +30,7 @@ export const mockBlocks: Block[] = [
     purpose: "Desenvolver projetos aplicados de engenharia, computação e inovação tecnológica.",
     serviceIds: [],
     floors: 4, x: 48, y: 22, color: "var(--chart-2)",
+    latitude: -7.15799, longitude: -34.85462,
   },
   {
     id: "b_c", name: "Bloco C — Humanas", code: "C",
@@ -37,6 +39,7 @@ export const mockBlocks: Block[] = [
     purpose: "Formação em ciências humanas, sociais aplicadas e atendimento psicossocial.",
     serviceIds: [],
     floors: 3, x: 70, y: 38, color: "var(--chart-5)",
+    latitude: -7.15871, longitude: -34.85330,
   },
   {
     id: "b_d", name: "Bloco D — Negócios", code: "D",
@@ -45,6 +48,7 @@ export const mockBlocks: Block[] = [
     purpose: "Formar profissionais de gestão, finanças e empreendedorismo.",
     serviceIds: [],
     floors: 2, x: 60, y: 60, color: "var(--chart-4)",
+    latitude: -7.15970, longitude: -34.85390,
   },
   {
     id: "b_e", name: "Bloco E — Convivência", code: "E",
@@ -53,6 +57,7 @@ export const mockBlocks: Block[] = [
     purpose: "Oferecer suporte acadêmico, alimentação e espaços de estudo e socialização.",
     serviceIds: ["s_food", "s_lib", "s_support"],
     floors: 2, x: 35, y: 65, color: "var(--chart-3)",
+    latitude: -7.15993, longitude: -34.85540,
   },
 ];
 
@@ -75,12 +80,12 @@ export const mockRooms: Room[] = [
 ];
 
 export const mockServices: ServiceLocation[] = [
-  { id: "s_clinic", name: "Clínica-Escola UNIPÊ", category: "clinic", description: "Atendimentos abertos à comunidade.", x: 24, y: 40, hours: "Seg–Sex · 08h–18h" },
-  { id: "s_food", name: "Praça de Alimentação", category: "food", description: "Restaurantes, cafés e lanchonetes.", x: 38, y: 68, hours: "Seg–Sáb · 07h–22h" },
-  { id: "s_lib", name: "Biblioteca Central", category: "library", description: "Acervo físico e digital, salas de estudo.", x: 32, y: 60, hours: "Seg–Sex · 07h–22h" },
-  { id: "s_support", name: "Atendimento ao Aluno", category: "support", description: "Secretaria acadêmica e financeira.", x: 40, y: 62, hours: "Seg–Sex · 08h–20h" },
-  { id: "s_sports", name: "Centro Esportivo", category: "sports", description: "Quadras, academia e piscina.", x: 80, y: 70, hours: "Seg–Sáb · 06h–22h" },
-  { id: "s_park", name: "Estacionamento Principal", category: "parking", description: "Acesso pela portaria principal.", x: 10, y: 50, hours: "24h" },
+  { id: "s_clinic", name: "Clínica-Escola UNIPÊ", category: "clinic", description: "Atendimentos abertos à comunidade em odontologia, psicologia, fisioterapia, nutrição, farmácia e enfermagem.", x: 24, y: 40, hours: "Seg–Sex · 08h–18h", latitude: -7.15880, longitude: -34.85606 },
+  { id: "s_food", name: "Praça de Alimentação", category: "food", description: "Restaurantes, cafés e lanchonetes.", x: 38, y: 68, hours: "Seg–Sáb · 07h–22h", latitude: -7.16006, longitude: -34.85522 },
+  { id: "s_lib", name: "Biblioteca Central", category: "library", description: "Acervo físico e digital, salas de estudo. Mais de 140 mil volumes.", x: 32, y: 60, hours: "Seg–Sex · 07h–22h · Sáb 08h–12h", latitude: -7.15970, longitude: -34.85558 },
+  { id: "s_support", name: "Atendimento ao Aluno", category: "support", description: "Secretaria acadêmica, financeira e central de atendimento.", x: 40, y: 62, hours: "Seg–Sex · 08h–20h", latitude: -7.15979, longitude: -34.85510 },
+  { id: "s_sports", name: "Centro Esportivo", category: "sports", description: "Quadras, academia e piscina.", x: 80, y: 70, hours: "Seg–Sáb · 06h–22h", latitude: -7.16015, longitude: -34.85270 },
+  { id: "s_park", name: "Estacionamento Principal", category: "parking", description: "Acesso pela portaria principal.", x: 10, y: 50, hours: "24h", latitude: -7.15925, longitude: -34.85690 },
 ];
 
 const today = new Date();
