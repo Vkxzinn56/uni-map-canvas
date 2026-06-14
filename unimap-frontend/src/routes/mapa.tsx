@@ -194,7 +194,7 @@ function MapaPage() {
                 {[
                   { label: "Blocos", value: mockBlocks.length },
                   { label: "Serviços", value: mockServices.length },
-                  { label: "Salas mapeadas", value: 48 },
+                  { label: "Salas mapeadas", value: mockRooms.length },
                   { label: "Acessibilidade", value: "100%" },
                 ].map((s) => (
                   <div key={s.label} className="rounded-2xl bg-secondary/60 p-3">
