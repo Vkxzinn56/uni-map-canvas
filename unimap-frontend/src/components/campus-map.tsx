@@ -9,6 +9,24 @@ const CHART_COLORS: Record<string, string> = {
   "var(--chart-5)": "#8b5cf6",
 };
 
+const SERVICE_COLORS: Record<string, string> = {
+  clinic: "#ef4444",
+  food: "#f59e0b",
+  library: "#3b82f6",
+  support: "#14b8a6",
+  sports: "#22c55e",
+  parking: "#64748b",
+};
+
+const SERVICE_ICONS: Record<string, string> = {
+  clinic: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+  food: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
+  library: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  support: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  sports: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>`,
+  parking: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>`,
+};
+
 const UNIPE_CENTER: [number, number] = [-7.15927, -34.85474];
 const PORTARIA: [number, number] = [-7.15850, -34.85750];
 
@@ -138,16 +156,17 @@ export function CampusMap({
     layer.clearLayers();
     if (!showServices) return;
 
-    const icon = L.divIcon({
-      className: "",
-      html: `<div style="width:16px;height:16px;border-radius:50%;background:rgba(100,116,139,0.8);border:3px solid rgba(255,255,255,0.95);box-shadow:0 1px 6px rgba(0,0,0,0.15);"></div>`,
-      iconSize: [16, 16],
-      iconAnchor: [8, 8],
-    });
-
     for (const s of mockServices) {
+      const color = SERVICE_COLORS[s.category] || "#64748b";
+      const svg = SERVICE_ICONS[s.category] || "";
+      const icon = L.divIcon({
+        className: "",
+        html: `<div style="width:28px;height:28px;border-radius:8px;background:${color};border:2.5px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;">${svg}</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+      });
       const marker = L.marker([s.latitude, s.longitude], { icon }).addTo(layer);
-      marker.bindPopup(`<div style="font-size:13px;font-weight:600">${s.name}</div><div style="font-size:11px;color:#666;margin-top:2px">${s.hours}</div>`);
+      marker.bindPopup(`<div style="font-size:13px;font-weight:600">${s.name}</div><div style="font-size:11px;color:#666;margin-top:2px">${s.hours}</div><div style="font-size:11px;color:#444;margin-top:4px;max-width:200px">${s.description}</div>`);
     }
   }, [leaflet, showServices]);
 

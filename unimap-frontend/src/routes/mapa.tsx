@@ -193,7 +193,7 @@ function MapaPage() {
               <div className="mt-5 grid grid-cols-2 gap-2 text-left">
                 {[
                   { label: "Blocos", value: mockBlocks.length },
-                  { label: "Serviços", value: 6 },
+                  { label: "Serviços", value: mockServices.length },
                   { label: "Salas mapeadas", value: 48 },
                   { label: "Acessibilidade", value: "100%" },
                 ].map((s) => (
