@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c0392b"/>
+      <stop offset="100%" stop-color="#8e1a2b"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(4,4) scale(0.85)">
+    <path fill="url(#g)" d="M30 2l7.4 17.1L56 21.3l-13 14 3.3 18.4L30 44.5 13.7 53.7 17 35.3 4 21.3l18.6-2.2z"/>
+  </g>
+  <text x="62" y="40" font-family="'Segoe UI',system-ui,sans-serif" font-size="30" font-weight="700" fill="#a12c43" letter-spacing="-0.5">UniMap</text>
+</svg>
